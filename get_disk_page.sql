@@ -9,12 +9,17 @@ BEGIN
 		return result_frame;
 	END IF;
 	
-	SELECT * INTO result_frame FROM pick_frame_LRU();
+	SELECT * INTO result_frame FROM pick_frame_MRU();
 	
 	prev_disk_page := (SELECT nro_disk_page FROM bufferpool WHERE nro_frame = result_frame);
 	
-	INSERT INTO bufferpool (nro_frame, free, dirty, nro_disk_page, last_touch)
-		VALUES (result_frame, FALSE, FALSE, nro_page, current_timestamp);
+	UPDATE bufferpool 
+	SET nro_frame = result_frame,
+		free = false,
+		dirty = false,
+		nro_disk_page = nro_page,
+		last_touch = CURRENT_TIMESTAMP
+	WHERE nro_frame = result_frame;
 	
 	RAISE NOTICE 'Lectura desde el disco. Pagina del disco eliminada del buffer: %', prev_disk_page;
 	
