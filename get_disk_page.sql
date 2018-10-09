@@ -18,7 +18,7 @@ BEGIN
 		free = false,
 		dirty = false,
 		nro_disk_page = nro_page,
-		last_touch = CURRENT_TIMESTAMP
+		last_touch = clock_TIMESTAMP()
 	WHERE nro_frame = result_frame;
 	
 	RAISE NOTICE 'Lectura desde el disco. Pagina del disco eliminada del buffer: %', prev_disk_page;
