@@ -5,6 +5,15 @@ DECLARE
 BEGIN
     SELECT nro_frame INTO result_frame FROM bufferpool WHERE nro_disk_page = $1;
 	IF result_frame <> -1 THEN
+
+	UPDATE bufferpool 
+	SET nro_frame = result_frame,
+		free = false,
+		dirty = false,
+		nro_disk_page = nro_page,
+		last_touch = clock_TIMESTAMP()
+	WHERE nro_frame = result_frame;
+	
 		RAISE NOTICE 'Lectura desde el buffer. Frame Nro: %', result_frame;
 		return result_frame;
 	END IF;
