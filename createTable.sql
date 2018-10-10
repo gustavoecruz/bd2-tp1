@@ -9,10 +9,10 @@ CREATE TABLE bufferpool(
 	);
 
 INSERT INTO bufferpool (nro_frame, free, dirty, nro_disk_page, last_touch)
-VALUES (1,FALSE,FALSE,null,clock_timestamp());
+VALUES (1,TRUE,FALSE,null,clock_timestamp());
 INSERT INTO bufferpool (nro_frame, free, dirty, nro_disk_page, last_touch)
-VALUES (2,FALSE,FALSE,null,clock_timestamp());
+VALUES (2,TRUE,FALSE,null,clock_timestamp());
 INSERT INTO bufferpool (nro_frame, free, dirty, nro_disk_page, last_touch)
-VALUES (3,FALSE,FALSE,null,clock_timestamp());
+VALUES (3,TRUE,FALSE,null,clock_timestamp());
 INSERT INTO bufferpool (nro_frame, free, dirty, nro_disk_page, last_touch)
-VALUES (4,FALSE,FALSE,null,clock_timestamp());
+VALUES (4,TRUE,FALSE,null,clock_timestamp());
