@@ -22,7 +22,7 @@ BEGIN
 		return result_frame;
 	END IF;
 	
-	SELECT * INTO result_frame FROM pick_frame_MRU();	
+	SELECT * INTO result_frame FROM pick_frame_LRU();	
 	prev_disk_page := (SELECT nro_disk_page FROM bufferpool WHERE nro_frame = result_frame);
 	PERFORM actualizarFrame(nro_page, result_frame);
 	RAISE NOTICE 'Lectura desde el disco. Pagina del disco eliminada del buffer: %. Almacenada en el Frame Nro: %', prev_disk_page, result_frame;
@@ -37,8 +37,8 @@ $$ LANGUAGE plpgsql;
 drop function if exists frameVacio();
 create or replace function frameVacio() returns int as $$
 
-	select nro_frame from bufferpool where nro_disk_page IS NULL
-	order by last_touch asc
+	select nro_frame from bufferpool where free IS true
+	order by nro_frame asc
 	limit 1 offset 0
 	
 $$
@@ -59,4 +59,3 @@ create or replace function actualizarFrame(nro_page integer, result_frame intege
 		WHERE nro_frame = result_frame;
 
 $$ Language SQL;
-
