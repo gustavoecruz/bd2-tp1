@@ -6,9 +6,10 @@ DECLARE
 BEGIN
 	SELECT nro_frame INTO result_frame FROM bufferpool WHERE nro_disk_page = $1;
 	IF result_frame <> -1 THEN
-		
+
+		prev_disk_page := (SELECT nro_disk_page FROM bufferpool WHERE nro_frame = result_frame);
 		PERFORM actualizarFrame(nro_page, result_frame);
-		RAISE NOTICE 'Lectura desde el buffer. Frame Nro: %', result_frame;
+		RAISE NOTICE 'Lectura de la pagina % desde el buffer. Frame Nro: %', prev_disk_page, result_frame;
 		
 		return result_frame;
 	END IF;
@@ -17,12 +18,12 @@ BEGIN
 	IF result_frame IS NOT NULL THEN
 		
 		PERFORM actualizarFrame(nro_page, result_frame);
-		RAISE NOTICE 'Lectura desde disco. No se elimino ningun frame. Almacenada en el Frame Nro: %', result_frame;
+		RAISE NOTICE 'Lectura desde disco. No se elimino ninguna página. Almacenada en el Frame Nro: %', result_frame;
 		
 		return result_frame;
 	END IF;
 	
-	SELECT * INTO result_frame FROM pick_frame_LRU();	
+	SELECT * INTO result_frame FROM pick_frame_MRU();	
 	prev_disk_page := (SELECT nro_disk_page FROM bufferpool WHERE nro_frame = result_frame);
 	PERFORM actualizarFrame(nro_page, result_frame);
 	RAISE NOTICE 'Lectura desde el disco. Pagina del disco eliminada del buffer: %. Almacenada en el Frame Nro: %', prev_disk_page, result_frame;
